@@ -12,12 +12,15 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
 {
     private final EmptyCellGraph emptyCellGraph;
     private boolean isParallel = true;
-    public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph, boolean isParallel)
+    private boolean isDimezzamento = true;
+
+    public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph, boolean isParallel, boolean isDimezzamento)
     {
         this(emptyCellGraph);
         this.isParallel = isParallel;
-
+        this.isDimezzamento = true;
     }
+
     public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph)
     {
         this.emptyCellGraph = emptyCellGraph;
@@ -27,22 +30,21 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
     {
 
         Coordinates coordinates = emptyCellGraph.getSmaller();
-        if(emptyCellGraph.getSmaller() == null)
+        if (emptyCellGraph.getSmaller() == null)
         {
             // Le celle sono state tutte riempite. Esco.
             return 1;
         }
         ArrayList<Integer> candidates = emptyCellGraph.getCandidates(coordinates);
 
-
-
         ArrayList<EfficientComputeSolutions> threads = new ArrayList<>();
 
-        for(Integer c : candidates)
+        for (Integer c : candidates)
         {
             //Se impostando la cella coordinates a c, non mi porta a una configurazione non valida...
             EmptyCellGraph ecg;
-            if(emptyCellGraph.tryRemoveCoordinates(coordinates, c)){
+            if (emptyCellGraph.tryRemoveCoordinates(coordinates, c))
+            {
                 ecg = new EmptyCellGraph(emptyCellGraph);
                 ecg.removeCoordinates(coordinates, c);
 
@@ -50,23 +52,44 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
             }
         }
 
-        //System.exit(0);
-        int toRet = 0;
-
-        if(isParallel)
+        if(threads.size() == 0)
         {
-            for (EfficientComputeSolutions ecs : threads)
+            return 0;
+        }
+
+        int toRet = 0;
+        // Repeats some code, but simplify experiments
+        if (isParallel)
+        {
+            if (isDimezzamento)
             {
-                ecs.fork();
+                for(int i = 0; i < threads.size()-1; i++)
+                {
+                    threads.get(i).fork();
+                }
+
+                toRet += threads.get(threads.size()-1).compute();
+
+                for(int i = 0; i < threads.size()-1; i++)
+                {
+                    toRet += threads.get(i).join();
+                }
             }
-            for(EfficientComputeSolutions ecs: threads)
+            else
             {
-                toRet += ecs.join();
+                for (EfficientComputeSolutions ecs : threads)
+                {
+                    ecs.fork();
+                }
+                for (EfficientComputeSolutions ecs : threads)
+                {
+                    toRet += ecs.join();
+                }
             }
         }
         else
         {
-            for(EfficientComputeSolutions ecs: threads)
+            for (EfficientComputeSolutions ecs : threads)
             {
                 toRet += ecs.compute();
             }

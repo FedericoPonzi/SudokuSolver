@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException, RuntimeException
     {
         float density = 0f;
-        String filename = "/home/isaacisback/workspace/Homework1/src/ponzi/federico/homeworkone/game3.txt";
+        String filename = "/home/isaacisback/workspace/Homework1/src/res/game3.txt";
         if(args.length > 1)
         {
             filename = args[1];
@@ -54,25 +54,13 @@ public class Main {
 
         EmptyCellGraph emptyCellGraph = w.getEmptyCellGraph();
         System.out.println("File name: " + filename);
-        System.out.println("Candidates size: "+ emptyCellGraph.cand.size());
-        System.out.println("Emptycells size: "+ emptyCellGraph.ec.size());
-        for(Coordinates coord : emptyCellGraph.ec.keySet()){
-            System.out.print("Chiave:" + coord + " -> ");
-            w.emptyCells.getAdjacents(coord).forEach(System.out::print);
-            System.out.println();
+        System.out.println("Empty cells:" + emptyCellGraph.ec.size());
+        System.out.println("Fill factor: " + (int)((((float)emptyCellGraph.ec.size())/81)*100) + "%");
+        ss = new BigInteger("1");
+        for(Coordinates c : emptyCellGraph.cand.keySet())
+        {
+            ss = ss.multiply(new BigInteger(emptyCellGraph.cand.get(c).size() + ""));
         }
-
-        System.out.println("Candidates size: "+ emptyCellGraph.cand.size());
-
-        for(Coordinates coord : emptyCellGraph.cand.keySet()){
-            System.out.print("Chiave:" + coord + " : ");
-            w.emptyCells.getCandidates(coord).forEach(System.out::print);
-            System.out.println();
-        }
-
-        System.out.println("Size:" + w.emptyCells.ecKeySet().size());
-        System.out.println("Empty cells:" + (81-(int)density));
-        System.out.println("Fill factor: " + ((int)((density/81)*100)) + "%");
         System.out.println("Search space before elimination: " + ss.toString() + " (len:" + ss.toString().length() +")");
         System.out.println("Searching in parallel:");
         long t0 = System.currentTimeMillis();
@@ -80,7 +68,6 @@ public class Main {
         long t1 = System.currentTimeMillis();
         System.out.println("Numero di soluzioni: " + i);
         System.out.println("Tempo passato (in parallelo): " + (t1 - t0) + "ms");
-
     }
     private static int computeSolutions(EmptyCellGraph ecg)
     {

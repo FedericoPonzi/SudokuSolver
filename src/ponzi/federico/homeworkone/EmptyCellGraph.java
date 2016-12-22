@@ -6,7 +6,6 @@ import ponzi.federico.homeworkone.entities.Coordinates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by isaacisback on 22/12/16.
@@ -21,6 +20,11 @@ public class EmptyCellGraph implements Cloneable
         ec = new HashMap<>();
         cand = new HashMap<>();
     }
+
+    /**
+     * Clone costructor.
+     * @param e
+     */
     public EmptyCellGraph(EmptyCellGraph e)
     {
         this();
@@ -46,10 +50,6 @@ public class EmptyCellGraph implements Cloneable
             }
             ec.put(k, v);
         }
-    }
-    public Set<Coordinates> ecKeySet()
-    {
-        return ec.keySet();
     }
 
     /**
@@ -128,37 +128,5 @@ public class EmptyCellGraph implements Cloneable
     public ArrayList<Integer> getCandidates(Coordinates c)
     {
         return cand.get(c);
-    }
-
-    public ArrayList<Integer> getCandidates(int x, int y)
-    {
-        return cand.get(new Coordinates(x, y));
-    }
-
-    public HashSet<Coordinates> getAdjacents(Coordinates c)
-    {
-        return ec.get(c);
-    }
-
-    public HashSet<Coordinates> getAdjacents(int x, int y)
-    {
-        return getAdjacents(new Coordinates(x, y));
-    }
-
-    @Override protected Object clone()
-    {
-        EmptyCellGraph toRet;
-        try
-        {
-            toRet = (EmptyCellGraph) super.clone();
-            toRet.ec = (HashMap<Coordinates, HashSet<Coordinates>>) ec.clone();
-            toRet.cand = (HashMap<Coordinates, ArrayList<Integer>>) cand.clone();
-            return toRet;
-        }
-        catch (CloneNotSupportedException e)
-        {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
     }
 }
