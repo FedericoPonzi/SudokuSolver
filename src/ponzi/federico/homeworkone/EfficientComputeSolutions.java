@@ -28,6 +28,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
 
     @Override protected Integer compute()
     {
+        int toRet = 0;
 
         Coordinates coordinates = emptyCellGraph.getSmaller();
         if (emptyCellGraph.getSmaller() == null)
@@ -35,8 +36,8 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
             // Le celle sono state tutte riempite. Esco.
             return 1;
         }
-        ArrayList<Integer> candidates = emptyCellGraph.getCandidates(coordinates);
 
+        ArrayList<Integer> candidates = emptyCellGraph.getCandidates(coordinates);
         ArrayList<EfficientComputeSolutions> threads = new ArrayList<>();
 
         for (Integer c : candidates)
@@ -47,17 +48,21 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
             {
                 ecg = new EmptyCellGraph(emptyCellGraph);
                 ecg.removeCoordinates(coordinates, c);
-
+                if (ecg.getSmaller() == null)
+                {
+                    toRet++;
+                    return toRet;
+                }
                 threads.add(new EfficientComputeSolutions(ecg));
             }
         }
 
         if(threads.size() == 0)
         {
-            return 0;
+            return toRet;
         }
 
-        int toRet = 0;
+
         // Repeats some code, but simplify experiments
         if (isParallel)
         {
