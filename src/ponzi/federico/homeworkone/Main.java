@@ -1,5 +1,6 @@
 package ponzi.federico.homeworkone;
 
+import ponzi.federico.homeworkone.entities.Cell;
 import ponzi.federico.homeworkone.entities.Coordinates;
 
 import java.io.File;
