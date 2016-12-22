@@ -1,6 +1,5 @@
 package ponzi.federico.homeworkone;
 
-import ponzi.federico.homeworkone.entities.Cell;
 import ponzi.federico.homeworkone.entities.Coordinates;
 
 import java.math.BigInteger;
@@ -23,6 +22,7 @@ public class Worker
     }
 
     public EmptyCellGraph emptyCells = new EmptyCellGraph();
+    // TODO: find if someone has 0 candidates. In that case it's impossible to solve.
 
     BigInteger ss = new BigInteger("1");
 
@@ -30,10 +30,12 @@ public class Worker
         setAllCandidates();
         return ss;
     }
+    public EmptyCellGraph getEmptyCellGraph(){
+        return emptyCells;
+    }
 
-    public Cell[][] setAllCandidates()
+    public EmptyCellGraph setAllCandidates()
     {
-        Integer[] cands;
         for(int r = 0; r < Main.SIZE; r++)
         {
             for(int c = 0; c < Main.SIZE; c++)
@@ -41,15 +43,13 @@ public class Worker
                 if(table[r][c].getVal() != -1)
                     continue;
 
-                cands = findCandidates(table[r][c]);
-
-                table[r][c].setCandidates(cands);
+                findCandidates(table[r][c]);
             }
         }
-        return table;
+        return emptyCells;
     }
 
-    public Integer[] findCandidates(Cell cell)
+    public ArrayList<Integer> findCandidates(Cell cell) throws RuntimeException
     {
         HashSet<Coordinates> ec = new HashSet<>();
 
@@ -59,24 +59,18 @@ public class Worker
         // Controllo righe e colonne:.
         for (int i = 0; i < Main.SIZE; i++)
         {
-            if(table[i][cell.getX()].getVal() == -1 && i != cell.getY())
+            if(table[i][cell.getX()].getVal() == -1 && cell.getY() != i)
             {
-                ec.add(new Coordinates(i, cell.getX()));
+                ec.add(new Coordinates(cell.getX(), i));
             }
             if(table[cell.getY()][i].getVal() == -1 && cell.getX() != i)
             {
-                ec.add(new Coordinates(cell.getY(), i));
+                ec.add(new Coordinates(i, cell.getY()));
                 //System.out.println("Gotcha." + cell.getY() +" -"+ i);
 
             }
             candidates.remove(table[cell.getY()][i].getVal());
             candidates.remove(table[i][cell.getX()].getVal());
-
-            if (candidates.size() == 1)
-            {
-                    emptyCells.addCoordinates(new Coordinates(cell.getX(), cell.getY()), ec);
-                    return new Integer[] { candidates.get(0) };
-            }
         }
 
         int startR = 0;
@@ -105,25 +99,21 @@ public class Worker
             {
                 if(table[r][c].getVal() == -1 && r != cell.getY() && c != cell.getX())
                 {
-                    ec.add(new Coordinates(r,c));
-
+                    ec.add(new Coordinates(c, r));
                 }
                 candidates.remove(table[r][c].getVal());
-
-                if (candidates.size() == 1)
-                {
-                    emptyCells.addCoordinates(new Coordinates(cell.getX(), cell.getY()), ec, new Integer[] { candidates.get(0) });
-                    return new Integer[] { candidates.get(0) };
-                }
             }
         }
 
         //Se arrivo qui, candidates contiene piu di un candidato.
         ss = ss.multiply(new BigInteger(candidates.size() + ""));
+        if(candidates.size() == 0)
+        {
+            throw new RuntimeException("Impossible sudoku!");
+        }
+        emptyCells.addCoordinates(cell.getX(), cell.getY(), ec, candidates);
 
-        emptyCells.addCoordinates(new Coordinates(cell.getX(), cell.getY()), ec);
-
-        return candidates.toArray(new Integer[candidates.size()]);
+        return candidates;
 
     }
 }

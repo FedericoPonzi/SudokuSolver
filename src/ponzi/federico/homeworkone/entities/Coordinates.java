@@ -3,10 +3,10 @@ package ponzi.federico.homeworkone.entities;
 /**
  * Created by isaacisback on 22/12/16.
  */
-public class Coordinates
+public class Coordinates implements Cloneable
 {
-    int x;
-    int y;
+    Integer x;
+    Integer y;
 
     public Coordinates(int x, int y)
     {
@@ -29,14 +29,31 @@ public class Coordinates
         return obj instanceof Coordinates && ((Coordinates)obj).getX() == getX() && ((Coordinates) obj).getY() == getY();
     }
 
+    @Override public int hashCode()
+    {
+        long bits = java.lang.Double.doubleToLongBits(getX());
+        bits ^= java.lang.Double.doubleToLongBits(getY()) * 31;
+        return (((int) bits) ^ ((int) (bits >> 32)));
+    }
+
     @Override protected Object clone()
     {
-           return new Coordinates(x,y);
-
+        try
+        {
+            Coordinates c = (Coordinates) super.clone();
+            c.x = x;
+            c.y = y;
+            return c;
+        }
+        catch (CloneNotSupportedException e)
+        {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override public String toString()
     {
-        return "["+ y + "][" + x + "] ";
+        return "["+ y + "][" + x + "]";
     }
 }

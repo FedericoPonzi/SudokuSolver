@@ -1,6 +1,5 @@
 package ponzi.federico.homeworkone;
 
-import ponzi.federico.homeworkone.entities.Cell;
 import ponzi.federico.homeworkone.entities.Coordinates;
 
 import java.io.File;
@@ -13,7 +12,7 @@ public class Main {
 
     static final ForkJoinPool fjPool = new ForkJoinPool();
     public final static int SIZE = 9;
-    public static void main(String[] args) throws FileNotFoundException
+    public static void main(String[] args) throws FileNotFoundException, RuntimeException
     {
         float density = 0f;
         String filename = "/home/isaacisback/workspace/Homework1/src/ponzi/federico/homeworkone/game3.txt";
@@ -49,41 +48,43 @@ public class Main {
         }
         // End of initialize.
         Worker w = new Worker(table);
-        BigInteger ss = w.getSolutionSpace();
-        System.out.println("File name: " + filename);
 
-        printTable(table);
-        for(Coordinates coord : w.emptyCells.keySet()){
+        BigInteger ss = w.getSolutionSpace();
+
+        EmptyCellGraph emptyCellGraph = w.getEmptyCellGraph();
+        System.out.println("File name: " + filename);
+        System.out.println("Candidates size: "+ emptyCellGraph.cand.size());
+        System.out.println("Emptycells size: "+ emptyCellGraph.ec.size());
+        for(Coordinates coord : emptyCellGraph.ec.keySet()){
             System.out.print("Chiave:" + coord + " -> ");
             w.emptyCells.getAdjacents(coord).forEach(System.out::print);
             System.out.println();
         }
-        System.out.println("Size:" + w.emptyCells.keySet().size());
+
+        System.out.println("Candidates size: "+ emptyCellGraph.cand.size());
+
+        for(Coordinates coord : emptyCellGraph.cand.keySet()){
+            System.out.print("Chiave:" + coord + " : ");
+            w.emptyCells.getCandidates(coord).forEach(System.out::print);
+            System.out.println();
+        }
+
+        System.out.println("Size:" + w.emptyCells.ecKeySet().size());
         System.out.println("Empty cells:" + (81-(int)density));
-        System.out.println("fill factor: " + ((int)((density/81)*100)) + "%");
+        System.out.println("Fill factor: " + ((int)((density/81)*100)) + "%");
         System.out.println("Search space before elimination: " + ss.toString() + " (len:" + ss.toString().length() +")");
         System.out.println("Searching in parallel:");
         long t0 = System.currentTimeMillis();
-        int i = computeSolutions(table, w.emptyCells);
+        int i = computeSolutions(w.emptyCells);
         long t1 = System.currentTimeMillis();
         System.out.println("Numero di soluzioni: " + i);
         System.out.println("Tempo passato (in parallelo): " + (t1 - t0) + "ms");
 
     }
-    private static int computeSolutions(Cell[][] table, EmptyCellGraph ecg)
+    private static int computeSolutions(EmptyCellGraph ecg)
     {
-        ComputeSolutions t = new ComputeSolutions(table, ecg);
+        EfficientComputeSolutions t = new EfficientComputeSolutions(ecg);
         return fjPool.invoke(t);
     }
-    public static void printTable(Cell[][] t)
-    {
-        for(Cell[] cells : t)
-        {
-            for(Cell c : cells)
-            {
-                //System.out.print("["+ c.getY() +"]["+c.getX() +"]");
-                System.out.print(c);
-            }
-        }
-    }
+
 }
