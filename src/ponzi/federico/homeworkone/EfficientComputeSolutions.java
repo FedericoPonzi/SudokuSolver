@@ -11,7 +11,7 @@ import java.util.concurrent.RecursiveTask;
 public class EfficientComputeSolutions extends RecursiveTask<Integer>
 {
     private final EmptyCellGraph emptyCellGraph;
-    private boolean isParallel = true;
+    private boolean isParallel = false;
     private boolean isDimezzamento = true;
 
     public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph, boolean isParallel, boolean isDimezzamento)
@@ -43,17 +43,20 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
         for (Integer c : candidates)
         {
             //Se impostando la cella coordinates a c, non mi porta a una configurazione non valida...
+            //If this leads to a bad configuration, skip this.
             EmptyCellGraph ecg;
             if (emptyCellGraph.tryRemoveCoordinates(coordinates, c))
             {
                 ecg = new EmptyCellGraph(emptyCellGraph);
                 ecg.removeCoordinates(coordinates, c);
-                if (ecg.getSmaller() == null)
+
+                //If there are no more nodes in the graph we're done.
+                if (ecg.ec.size() == 0)
                 {
                     toRet++;
-                    return toRet;
+                    continue;
                 }
-                    threads.add(new EfficientComputeSolutions(ecg));
+                threads.add(new EfficientComputeSolutions(ecg));
             }
         }
 

@@ -65,6 +65,7 @@ public class Main {
         int i = computeSolutions(w.emptyCells);
         long t1 = System.currentTimeMillis();
         System.out.println("Numero di soluzioni: " + i);
+        System.out.println("Pool:" + fjPool.toString());
         System.out.println("Tempo passato (in parallelo): " + (t1 - t0) + "ms");
     }
     private static int computeSolutions(EmptyCellGraph ecg)

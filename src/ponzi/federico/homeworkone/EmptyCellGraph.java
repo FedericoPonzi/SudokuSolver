@@ -69,6 +69,8 @@ public class EmptyCellGraph implements Cloneable
         */
         for (Coordinates c : ec.keySet())
         {
+            if(cand.get(c).size() == 1)
+                return c;
             if (cand.get(c).size() < i)
             {
                 toRet = c;
@@ -87,7 +89,7 @@ public class EmptyCellGraph implements Cloneable
 
     /**
      * Check if setting coordinates = val will yeld to a valid configuration of the sudoku.
-     *
+     * This is useful because removeCoordinates' candidati.remove it's expensive.
      * @param coordinates
      * @param val
      * @return boolean true: if it's a valid configuration, false otherwise.
@@ -98,13 +100,9 @@ public class EmptyCellGraph implements Cloneable
         for (Coordinates c : neighbours)
         {
             ArrayList<Integer> candsOfC = cand.get(c);
-            for (Integer i : candsOfC)
-            {
-                if (i.equals(val) && candsOfC.size() == 1)
-                {
-                    return false;
-                }
-            }
+            //I get worried only if the size is 1. If it's 1 i check if the it contains val (this checks is O(N)).
+            if(candsOfC.size() == 1 && candsOfC.contains(val))
+                return false;
         }
         return true;
     }
@@ -117,6 +115,7 @@ public class EmptyCellGraph implements Cloneable
     public void removeCoordinates(Coordinates toRem, Integer val)
     {
         HashSet<Coordinates> neighbours = ec.get(toRem);
+
         for (Coordinates c : neighbours)
         {
             //Rimuovo val come possibile scelta di candidati alle altre coordinate
@@ -126,7 +125,6 @@ public class EmptyCellGraph implements Cloneable
             //Faccio sparire toRem dalla lista di adiacenza delle altre coordinate:
             ec.get(c).remove(toRem);
         }
-
         ec.remove(toRem);
         cand.remove(toRem);
     }
