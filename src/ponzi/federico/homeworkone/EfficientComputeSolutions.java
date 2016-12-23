@@ -11,14 +11,14 @@ import java.util.concurrent.RecursiveTask;
 public class EfficientComputeSolutions extends RecursiveTask<Integer>
 {
     private final EmptyCellGraph emptyCellGraph;
-    private boolean isParallel = false;
+    private boolean isParallel = true;
     private boolean isDimezzamento = true;
 
     public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph, boolean isParallel, boolean isDimezzamento)
     {
         this(emptyCellGraph);
         this.isParallel = isParallel;
-        this.isDimezzamento = true;
+        this.isDimezzamento = isDimezzamento;
     }
 
     public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph)
@@ -31,7 +31,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
         int toRet = 0;
 
         Coordinates coordinates = emptyCellGraph.getSmaller();
-        if (emptyCellGraph.getSmaller() == null)
+        if (coordinates == null)
         {
             // Le celle sono state tutte riempite. Esco.
             return 1;
