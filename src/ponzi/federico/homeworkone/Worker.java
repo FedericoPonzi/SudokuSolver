@@ -4,7 +4,6 @@ package ponzi.federico.homeworkone;
 import ponzi.federico.homeworkone.entities.Cell;
 import ponzi.federico.homeworkone.entities.Coordinates;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -16,21 +15,15 @@ import java.util.HashSet;
 public class Worker
 {
     private Cell[][] table;
+    public EmptyCellGraph emptyCells;
 
     public Worker(final Cell[][] table)
     {
-
+        emptyCells = new EmptyCellGraph();
         this.table = table;
-    }
-
-    public EmptyCellGraph emptyCells = new EmptyCellGraph();
-
-    BigInteger ss = new BigInteger("1");
-
-    public BigInteger getSolutionSpace(){
         setAllCandidates();
-        return ss;
     }
+
     public EmptyCellGraph getEmptyCellGraph(){
         return emptyCells;
     }
@@ -107,7 +100,6 @@ public class Worker
         }
 
         //Se arrivo qui, candidates contiene piu di un candidato.
-        ss = ss.multiply(new BigInteger(candidates.size() + ""));
         if(candidates.size() == 0)
         {
             throw new RuntimeException("Impossible sudoku!");

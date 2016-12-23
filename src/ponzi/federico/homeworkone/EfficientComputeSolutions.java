@@ -53,7 +53,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
                     toRet++;
                     return toRet;
                 }
-                threads.add(new EfficientComputeSolutions(ecg));
+                    threads.add(new EfficientComputeSolutions(ecg));
             }
         }
 

@@ -3,9 +3,7 @@ package ponzi.federico.homeworkone;
 
 import ponzi.federico.homeworkone.entities.Coordinates;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Created by isaacisback on 22/12/16.
@@ -32,7 +30,9 @@ public class EmptyCellGraph implements Cloneable
         {
             Coordinates k = new Coordinates(c.getX(),c.getY());
             ArrayList<Integer> v = new ArrayList<>();
-            for(Integer i : e.cand.get(c))
+
+            ArrayList<Integer> get = e.cand.get(c);
+            for (Integer i : get)
             {
                 v.add(new Integer(i));
             }
@@ -61,6 +61,12 @@ public class EmptyCellGraph implements Cloneable
     {
         int i = 9;
         Coordinates toRet = null;
+        /*
+        No, this is not faster :)
+        Object[] entries = ec.keySet().toArray();
+        if(entries.length > 0)
+            return (Coordinates) entries[0];
+        */
         for (Coordinates c : ec.keySet())
         {
             if (cand.get(c).size() < i)

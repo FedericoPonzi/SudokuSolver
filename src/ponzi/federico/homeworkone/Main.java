@@ -50,13 +50,11 @@ public class Main {
         // End of initialize.
         Worker w = new Worker(table);
 
-        BigInteger ss = w.getSolutionSpace();
-
         EmptyCellGraph emptyCellGraph = w.getEmptyCellGraph();
         System.out.println("File name: " + filename);
         System.out.println("Empty cells:" + emptyCellGraph.ec.size());
         System.out.println("Fill factor: " + (int)((((float)emptyCellGraph.ec.size())/81)*100) + "%");
-        ss = new BigInteger("1");
+        BigInteger ss = new BigInteger("1");
         for(Coordinates c : emptyCellGraph.cand.keySet())
         {
             ss = ss.multiply(new BigInteger(emptyCellGraph.cand.get(c).size() + ""));
