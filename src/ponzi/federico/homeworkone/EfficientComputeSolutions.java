@@ -31,12 +31,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
         int toRet = 0;
 
         Coordinates coordinates = emptyCellGraph.getSmaller();
-        if (coordinates == null)
-        {
-            // Le celle sono state tutte riempite. Esco.
-            return 1;
-        }
-
+        
         ArrayList<Integer> candidates = emptyCellGraph.getCandidates(coordinates);
         ArrayList<EfficientComputeSolutions> threads = new ArrayList<>();
 
