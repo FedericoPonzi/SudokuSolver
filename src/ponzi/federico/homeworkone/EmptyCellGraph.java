@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class EmptyCellGraph implements Cloneable
 {
-    HashMap<Coordinates, HashSet<Coordinates>> ec;
+    HashMap<Coordinates, ArrayList<Coordinates>> ec;
     HashMap<Coordinates, ArrayList<Integer>> cand;
 
     public EmptyCellGraph()
@@ -42,7 +42,7 @@ public class EmptyCellGraph implements Cloneable
         for(Coordinates c : e.ec.keySet())
         {
             Coordinates k = new Coordinates(c.getX(),c.getY());
-            HashSet<Coordinates> v = new HashSet<Coordinates>();
+            ArrayList<Coordinates> v = new ArrayList<>();
             for(Coordinates z : e.ec.get(c))
             {
                 Coordinates r = new Coordinates(z.getX(), z.getY());
@@ -80,7 +80,7 @@ public class EmptyCellGraph implements Cloneable
         return toRet;
     }
 
-    public void addCoordinates(int x, int y, HashSet<Coordinates> toAdd, ArrayList<Integer> candidates)
+    public void addCoordinates(int x, int y, ArrayList<Coordinates> toAdd, ArrayList<Integer> candidates)
     {
         Coordinates c = new Coordinates(x, y);
         ec.put(c, toAdd);
@@ -96,7 +96,7 @@ public class EmptyCellGraph implements Cloneable
      */
     public boolean tryRemoveCoordinates(Coordinates coordinates, Integer val)
     {
-        HashSet<Coordinates> neighbours = ec.get(coordinates);
+        ArrayList<Coordinates> neighbours = ec.get(coordinates);
         for (Coordinates c : neighbours)
         {
             ArrayList<Integer> candsOfC = cand.get(c);
@@ -114,7 +114,7 @@ public class EmptyCellGraph implements Cloneable
      */
     public void removeCoordinates(Coordinates toRem, Integer val)
     {
-        HashSet<Coordinates> neighbours = ec.get(toRem);
+        ArrayList<Coordinates> neighbours = ec.get(toRem);
 
         for (Coordinates c : neighbours)
         {

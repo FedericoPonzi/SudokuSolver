@@ -10,18 +10,69 @@ import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool;
 
 public class Main {
-
+     public static int workers = 0;
+    synchronized public static void addWorker()
+    {
+        workers++;
+    }
     static final ForkJoinPool fjPool = new ForkJoinPool();
     public final static int SIZE = 9;
     public static void main(String[] args) throws FileNotFoundException, RuntimeException
     {
-        float density = 0f;
-        String filename = "/home/isaacisback/workspace/Homework1/src/res/game3.txt";
-        if(args.length > 1)
+        String filename = "/home/isaacisback/workspace/Homework1/src/res/test1/test1_d.txt";
+        if(args.length >= 1)
         {
-            filename = args[1];
+            filename = args[0];
         }
+        EmptyCellGraph emptyCellGraph = getTable(filename);
 
+        System.out.println("File name: " + filename);
+        System.out.println("Empty cells:" + emptyCellGraph.ec.size());
+        System.out.println("Fill factor: " + (int)((((float)emptyCellGraph.ec.size())/81)*100) + "%");
+        BigInteger ss = new BigInteger("1");
+        for(Coordinates c : emptyCellGraph.cand.keySet())
+        {
+            ss = ss.multiply(new BigInteger(emptyCellGraph.cand.get(c).size() + ""));
+        }
+        System.out.println("Search space before elimination: " + ss.toString() + " (len:" + ss.toString().length() +")");
+        runPar(emptyCellGraph);
+        System.out.println();
+        //runSeq(emptyCellGraph);
+
+    }
+    private static void runPar(EmptyCellGraph emptyCellGraph)
+    {
+        System.out.println("Solving in parallel:");
+        long paral0 = System.currentTimeMillis();
+        int solParal = computeSolutions(emptyCellGraph, true, true);
+        long paral1 = System.currentTimeMillis();
+        System.out.println("Number of solutions:: " + solParal);
+        System.out.println("Pool:" + fjPool.toString());
+        System.out.println("Done in: " + (paral1 - paral0) + "ms");
+        System.out.println("Spawned workers: " + workers);
+    }
+
+    private static void runSeq(EmptyCellGraph emptyCellGraph){
+
+        System.out.println("Solving sequentially:");
+        long seq0 = System.currentTimeMillis();
+        int solSeq = computeSolutions(emptyCellGraph, false, false);
+        long seq1 = System.currentTimeMillis();
+        //assert(solParal == solSeq);
+
+        System.out.println("Number of solutions:: " + solSeq);
+        System.out.println("Done in: " + (seq1 - seq0) + "ms");
+    }
+    private static int computeSolutions(EmptyCellGraph ecg, boolean isParallel, boolean halveThreads)
+    {
+        EfficientComputeSolutions t = new EfficientComputeSolutions(new EmptyCellGraph(ecg), isParallel, halveThreads);
+        if(isParallel)
+            return fjPool.invoke(t);
+        return t.compute();
+    }
+
+    private static EmptyCellGraph getTable(String filename) throws FileNotFoundException
+    {
         Scanner s = new Scanner(new File(filename));
 
         Cell[][] table = new Cell[Main.SIZE][Main.SIZE];
@@ -40,38 +91,16 @@ public class Main {
                 }
                 else
                 {
-                    density++;
                     val = Character.getNumericValue(row.charAt(c));
                 }
 
                 table[r][c] = new Cell(r, c, val);;
             }
         }
-        // End of initialize.
-        Worker w = new Worker(table);
 
-        EmptyCellGraph emptyCellGraph = w.getEmptyCellGraph();
-        System.out.println("File name: " + filename);
-        System.out.println("Empty cells:" + emptyCellGraph.ec.size());
-        System.out.println("Fill factor: " + (int)((((float)emptyCellGraph.ec.size())/81)*100) + "%");
-        BigInteger ss = new BigInteger("1");
-        for(Coordinates c : emptyCellGraph.cand.keySet())
-        {
-            ss = ss.multiply(new BigInteger(emptyCellGraph.cand.get(c).size() + ""));
-        }
-        System.out.println("Search space before elimination: " + ss.toString() + " (len:" + ss.toString().length() +")");
-        System.out.println("Searching in parallel:");
-        long t0 = System.currentTimeMillis();
-        int i = computeSolutions(w.emptyCells);
-        long t1 = System.currentTimeMillis();
-        System.out.println("Numero di soluzioni: " + i);
-        System.out.println("Pool:" + fjPool.toString());
-        System.out.println("Tempo passato (in parallelo): " + (t1 - t0) + "ms");
-    }
-    private static int computeSolutions(EmptyCellGraph ecg)
-    {
-        EfficientComputeSolutions t = new EfficientComputeSolutions(ecg);
-        return fjPool.invoke(t);
+        Worker w = new Worker(table);
+        s.close();
+        return w.getEmptyCellGraph();
     }
 
 }

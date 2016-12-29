@@ -6,7 +6,6 @@ import ponzi.federico.homeworkone.entities.Coordinates;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 
 
 /**
@@ -30,6 +29,7 @@ public class Worker
 
     public EmptyCellGraph setAllCandidates()
     {
+
         for(int r = 0; r < Main.SIZE; r++)
         {
             for(int c = 0; c < Main.SIZE; c++)
@@ -45,7 +45,8 @@ public class Worker
 
     public ArrayList<Integer> findCandidates(Cell cell) throws RuntimeException
     {
-        HashSet<Coordinates> ec = new HashSet<>();
+        ArrayList<Coordinates> ec = new ArrayList<>();
+        //HashSet<Coordinates> ec = new HashSet<>();
 
         ArrayList<Integer> candidates = new ArrayList<>();
         candidates.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));

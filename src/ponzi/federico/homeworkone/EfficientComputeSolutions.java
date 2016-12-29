@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.concurrent.RecursiveTask;
 
 /**
- * Created by isaacisback on 22/12/16.
+ * Created by Federico Ponzi on 22/12/16.
  */
 public class EfficientComputeSolutions extends RecursiveTask<Integer>
 {
@@ -24,6 +24,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
     public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph)
     {
         this.emptyCellGraph = emptyCellGraph;
+        Main.addWorker();
     }
 
     @Override protected Integer compute()
@@ -31,7 +32,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
         int toRet = 0;
 
         Coordinates coordinates = emptyCellGraph.getSmaller();
-        
+
         ArrayList<Integer> candidates = emptyCellGraph.getCandidates(coordinates);
         ArrayList<EfficientComputeSolutions> threads = new ArrayList<>();
 
@@ -51,7 +52,10 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
                     toRet++;
                     continue;
                 }
-                threads.add(new EfficientComputeSolutions(ecg));
+                threads.add(new EfficientComputeSolutions(ecg, isParallel, isDimezzamento));
+            }else
+            {
+                Main.addWorker();
             }
         }
 
@@ -69,6 +73,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
                 for(int i = 0; i < threads.size()-1; i++)
                 {
                     threads.get(i).fork();
+                    Main.addWorker();
                 }
 
                 toRet += threads.get(threads.size()-1).compute();
@@ -83,6 +88,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
                 for (EfficientComputeSolutions ecs : threads)
                 {
                     ecs.fork();
+                    Main.addWorker();
                 }
                 for (EfficientComputeSolutions ecs : threads)
                 {
