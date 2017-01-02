@@ -11,12 +11,12 @@ import java.util.Arrays;
 /**
  * Created by isaacisback on 11/12/16.
  */
-public class Worker
+public class GraphBuilder
 {
     private Cell[][] table;
     public EmptyCellGraph emptyCells;
 
-    public Worker(final Cell[][] table)
+    public GraphBuilder(final Cell[][] table)
     {
         emptyCells = new EmptyCellGraph();
         this.table = table;
@@ -46,7 +46,6 @@ public class Worker
     public ArrayList<Integer> findCandidates(Cell cell) throws RuntimeException
     {
         ArrayList<Coordinates> ec = new ArrayList<>();
-        //HashSet<Coordinates> ec = new HashSet<>();
 
         ArrayList<Integer> candidates = new ArrayList<>();
         candidates.addAll(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));

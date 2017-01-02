@@ -19,7 +19,8 @@ public class Main {
     public final static int SIZE = 9;
     public static void main(String[] args) throws FileNotFoundException, RuntimeException
     {
-        String filename = "/home/isaacisback/workspace/Homework1/src/res/test1/test1_d.txt";
+        String filename = "/home/isaacisback/workspace/Homework1/src/res/test0/game3.txt";
+
         if(args.length >= 1)
         {
             filename = args[0];
@@ -98,7 +99,7 @@ public class Main {
             }
         }
 
-        Worker w = new Worker(table);
+        GraphBuilder w = new GraphBuilder(table);
         s.close();
         return w.getEmptyCellGraph();
     }
