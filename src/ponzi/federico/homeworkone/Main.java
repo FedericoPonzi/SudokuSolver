@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool;
 
 public class Main {
-     public static int workers = 0;
+     public static int workers = 1;
     synchronized public static void addWorker()
     {
         workers++;
@@ -19,12 +19,14 @@ public class Main {
     public final static int SIZE = 9;
     public static void main(String[] args) throws FileNotFoundException, RuntimeException
     {
-        String filename = "/home/isaacisback/workspace/Homework1/src/res/test0/game3.txt";
+        String filename;
 
         if(args.length >= 1)
         {
-            filename = args[0];
+            throw new IllegalArgumentException("A path to the sudoku file is needed.");
         }
+        filename = args[0];
+
         EmptyCellGraph emptyCellGraph = getTable(filename);
 
         System.out.println("File name: " + filename);
@@ -36,33 +38,50 @@ public class Main {
             ss = ss.multiply(new BigInteger(emptyCellGraph.cand.get(c).size() + ""));
         }
         System.out.println("Search space before elimination: " + ss.toString() + " (len:" + ss.toString().length() +")");
-        runPar(emptyCellGraph);
-        System.out.println();
-        //runSeq(emptyCellGraph);
 
+        if(args.length == 2)
+        {
+            switch (args[1])
+            {
+                case "--par":
+                    runPar(emptyCellGraph);
+                    break;
+                case "--seq":
+                    runSeq(emptyCellGraph);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Argument not recoginized:" + args[1]);
+            }
+        }else{
+            runPar(emptyCellGraph);
+            runSeq(emptyCellGraph);
+        }
     }
     private static void runPar(EmptyCellGraph emptyCellGraph)
     {
+        emptyCellGraph = new EmptyCellGraph(emptyCellGraph);
         System.out.println("Solving in parallel:");
         long paral0 = System.currentTimeMillis();
         int solParal = computeSolutions(emptyCellGraph, true, true);
         long paral1 = System.currentTimeMillis();
         System.out.println("Number of solutions:: " + solParal);
-        System.out.println("Pool:" + fjPool.toString());
         System.out.println("Done in: " + (paral1 - paral0) + "ms");
         System.out.println("Spawned workers: " + workers);
+        System.out.println("Pool:" + fjPool.toString());
+        System.out.println();
     }
 
-    private static void runSeq(EmptyCellGraph emptyCellGraph){
-
+    private static void runSeq(EmptyCellGraph emptyCellGraph)
+    {
+        emptyCellGraph = new EmptyCellGraph(emptyCellGraph);
         System.out.println("Solving sequentially:");
         long seq0 = System.currentTimeMillis();
         int solSeq = computeSolutions(emptyCellGraph, false, false);
         long seq1 = System.currentTimeMillis();
-        //assert(solParal == solSeq);
 
         System.out.println("Number of solutions:: " + solSeq);
         System.out.println("Done in: " + (seq1 - seq0) + "ms");
+        System.out.println();
     }
     private static int computeSolutions(EmptyCellGraph ecg, boolean isParallel, boolean halveThreads)
     {
@@ -72,13 +91,19 @@ public class Main {
         return t.compute();
     }
 
+    /**
+     * Parses the file and returns a graph of the sudoku's empty cells.
+     * @param filename
+     * @return
+     * @throws FileNotFoundException
+     */
     private static EmptyCellGraph getTable(String filename) throws FileNotFoundException
     {
         Scanner s = new Scanner(new File(filename));
 
         Cell[][] table = new Cell[Main.SIZE][Main.SIZE];
-        String row = "";
-        int val = -1;
+        String row;
+        int val;
         for(int r = 0; r < SIZE; r++)
         {
             row = s.nextLine();
@@ -95,7 +120,7 @@ public class Main {
                     val = Character.getNumericValue(row.charAt(c));
                 }
 
-                table[r][c] = new Cell(r, c, val);;
+                table[r][c] = new Cell(r, c, val);
             }
         }
 

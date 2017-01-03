@@ -24,7 +24,6 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
     public EfficientComputeSolutions(EmptyCellGraph emptyCellGraph)
     {
         this.emptyCellGraph = emptyCellGraph;
-        Main.addWorker();
     }
 
     @Override protected Integer compute()
@@ -72,6 +71,7 @@ public class EfficientComputeSolutions extends RecursiveTask<Integer>
             {
                 for(int i = 0; i < threads.size()-1; i++)
                 {
+
                     threads.get(i).fork();
                     Main.addWorker();
                 }

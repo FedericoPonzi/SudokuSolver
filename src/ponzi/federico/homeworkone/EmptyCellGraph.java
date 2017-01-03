@@ -6,7 +6,7 @@ import ponzi.federico.homeworkone.entities.Coordinates;
 import java.util.*;
 
 /**
- * Created by isaacisback on 22/12/16.
+ * Created by Federico Ponzi on 22/12/16.
  */
 public class EmptyCellGraph implements Cloneable
 {
@@ -21,7 +21,7 @@ public class EmptyCellGraph implements Cloneable
 
     /**
      * Clone costructor.
-     * @param e
+     * @param e an emptyCellGraph source.
      */
     public EmptyCellGraph(EmptyCellGraph e)
     {
@@ -55,7 +55,7 @@ public class EmptyCellGraph implements Cloneable
     /**
      * May return null. Returns the node with less candidates.
      *
-     * @return
+     * @return node with less candidates
      */
     public Coordinates getSmaller()
     {
@@ -91,7 +91,7 @@ public class EmptyCellGraph implements Cloneable
      * Check if setting coordinates = val will yeld to a valid configuration of the sudoku.
      * This is useful because removeCoordinates' candidati.remove it's expensive.
      * @param coordinates
-     * @param val
+     * @param val the value to remove
      * @return boolean true: if it's a valid configuration, false otherwise.
      */
     public boolean tryRemoveCoordinates(Coordinates coordinates, Integer val)
